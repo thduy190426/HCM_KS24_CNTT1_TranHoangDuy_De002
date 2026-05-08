@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Hệ thống Quản lý Nhân sự</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<h2>Quản lý Nhân sự</h2>
+
+<div class="search-bar">
+    <form th:action="@{/list}" method="get" style="display: flex; gap: 10px;">
+        <input type="text" name="keyword" th:value="${keyword}"
+               class="search-input" placeholder="Tìm theo tên hoặc chức vụ...">
+        <button type="submit" class="btn btn-save">Tìm kiếm</button>
+        <a th:href="@{/list}" class="btn btn-cancel" th:if="${keyword != null}">Xóa lọc</a>
+    </form>
+</div>
+
+<a th:href="@{/create}" class="btn btn-add">+ Thêm nhân viên</a>
+
+<table th:if="${not #lists.isEmpty(employees)}">
+    <thead>
+    <tr>
+        <th>Mã NV</th>
+        <th>Avatar</th>
+        <th>Họ và Tên</th>
+        <th>Chức vụ</th>
+        <th>Mức Lương</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="emp : ${employees}">
+        <td th:text="${emp.id}"></td>
+        <td>
+            <img th:if="${emp.avatar != null}"
+                 th:src="@{'/uploads/' + ${emp.avatar}}"
+                 class="thumbnail" alt="Avatar">
+            <img th:if="${emp.avatar == null}"
+                 th:src="@{/css/placeholder.jpg}"
+                 class="thumbnail" alt="Default">
+        </td>
+        <td th:text="${emp.fullName}"></td>
+        <td th:text="${emp.position}"></td>
+        <td th:text="${#numbers.formatDecimal(emp.salary, 1, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+        <td>
+            <a th:href="@{'/edit/' + ${emp.id}}" class="btn btn-edit">Sửa</a>
+            <a th:href="@{'/delete/' + ${emp.id}}" class="btn btn-delete"
+               onclick="return confirm('Bạn có chắc chắn muốn xóa nhân sự này?')">Xóa</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div th:if="${#lists.isEmpty(employees)}" class="empty-msg">
+    <p>Không tìm thấy nhân sự nào trong hệ thống.</p>
+</div>
+
+</body>
+</html>
